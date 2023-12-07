@@ -38,8 +38,6 @@ function setup() {
         img.resize(windowWidth, windowHeight); // 调整图片大小以适应窗口
         img.loadPixels();
     });
-
-    // 创建离屏缓冲区
     offscreen = createGraphics(windowWidth, windowHeight);
     offscreenNoa = createGraphics(windowWidth, windowHeight);
 
