@@ -19,7 +19,6 @@
 </head>
 <body>
 <script>
-    let num=0;
     let backGround;
     let offscreen;
     let offscreenNoa;
@@ -53,11 +52,6 @@ function setup() {
 }
 
     function draw() {
-        if(num==1){
-            for(let first_num=0;first_num<10;first_num++){
-                 ribbons.push(new Ribbon(random(200, 400), random(height / 3), random(-1, 1) > 0));
-            }
-        }
         //丝带实现
         if (mouseControl) {
             if (frameCount % 10 == 0) {
@@ -226,7 +220,6 @@ function setup() {
 
     //这是一个实现鼠标交互的函数
     function mousePressed() {
-        num++;
         boach = !mouseControl;
         mouseControl = boach;
     }
