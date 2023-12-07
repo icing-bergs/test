@@ -19,6 +19,9 @@
 </head>
 <body>
 <script>
+    let backGround;
+    let offscreen;
+    let offscreenNoa;
     let pic;
     let pixelSize = 6;
     let boach;
@@ -28,23 +31,39 @@
 
     function setup() {
         createCanvas(windowWidth, windowHeight); // 创建与窗口大小一致的画布
-        pic = loadImage("assets/images/new.png");
+         pic = loadImage("assets/images/original.png");
+        
             pic.resize(windowWidth, windowHeight); // 调整图片大小以适应窗口
             pic.loadPixels();
-        });
+        
         ribbons = [];
+
+        //将背景颜色放到离屏缓冲区
+        offscreen=creatGraphics(windowWidth, windowHeight);
+        offscreenNoa=creatGraphics(windowWidth, windowHeight);
+       
+        backGround=loadImage("assets/images/backGround.png");
+        backGround.resize(windowWidth, windowHeight);
+        offscreen.tint(255,3);
+        offScreen.image(backGround,0,0);
+
+        offScreenNoa.image(backGround,0,0);
+        //
     }
 
     function draw() {
         //丝带实现
         if (mouseControl) {
             if (frameCount % 3 == 0) {
+                if(offscreen){
+                    image(offscreen,0,0);
+                }
                 // noStroke();
                 // fill(255, 240, 240, 5);
                 // rect(0, 0, windowWidth, windowHeight);
 
 
-                drawGradientBackground(3);
+               // drawGradientBackground(3);
             }
             pointDraw = 0;
             if (frameCount % 60 == 0) { // 每ji秒添加6个丝带
@@ -65,7 +84,10 @@
         } else if (!mouseControl && pointDraw == 0) {
             pointDraw = 1;
             colorMode(RGB, 255, 255, 255);
-            drawGradientBackground(255);
+            //drawGradientBackground(255);
+            if(pffscreenNoa){
+                image(offscreenNoa,0,0);
+            }
         }
 
         //
@@ -163,36 +185,36 @@
 
     //这是控制背景颜色的函数
 
-    function drawGradientBackground(alpha) {
-        loadPixels();
+    // function drawGradientBackground(alpha) {
+    //     loadPixels();
 
-        for (let xx = 0; xx < width; xx++) {
-            for (let yy = 0; yy < height; yy++) {
-                let c;
-                //let alpha = 3; // 透明度设置，范围从0到255
-                if (yy < height / 12) {
-                    let ratioY = map(yy, 0, height / 12, 0, 1);
-                    c = lerpColor(color(250, 189, 190, alpha), color(250, 119, 121, alpha), ratioY);
-                } else if (yy < height * 2 / 5) {
-                    let ratioY = map(yy, height / 12, height * 2 / 5, 0, 1);
-                    c = lerpColor(color(250, 119, 121, alpha), color(119, 168, 250, alpha), ratioY);
-                } else if (yy < height * 3 / 5) {
-                    let ratioY = map(yy, height * 2 / 5, height * 3 / 5, 0, 1);
-                    c = lerpColor(color(119, 168, 250, alpha), color(189, 250, 245, alpha), ratioY);
-                } else if (yy < height * 7 / 10) {
-                    let ratioY = map(yy, height * 3 / 5, height * 7 / 10, 0, 1);
-                    c = lerpColor(color(189, 250, 245, alpha), color(225, 240, 133, alpha), ratioY);
-                } else {
-                    let ratioY = map(yy, height * 7 / 10, height, 0, 1);
-                    c = lerpColor(color(225, 240, 133, alpha), color(255, 98, 67, alpha), ratioY);
-                }
+    //     for (let xx = 0; xx < width; xx++) {
+    //         for (let yy = 0; yy < height; yy++) {
+    //             let c;
+    //             //let alpha = 3; // 透明度设置，范围从0到255
+    //             if (yy < height / 12) {
+    //                 let ratioY = map(yy, 0, height / 12, 0, 1);
+    //                 c = lerpColor(color(250, 189, 190, alpha), color(250, 119, 121, alpha), ratioY);
+    //             } else if (yy < height * 2 / 5) {
+    //                 let ratioY = map(yy, height / 12, height * 2 / 5, 0, 1);
+    //                 c = lerpColor(color(250, 119, 121, alpha), color(119, 168, 250, alpha), ratioY);
+    //             } else if (yy < height * 3 / 5) {
+    //                 let ratioY = map(yy, height * 2 / 5, height * 3 / 5, 0, 1);
+    //                 c = lerpColor(color(119, 168, 250, alpha), color(189, 250, 245, alpha), ratioY);
+    //             } else if (yy < height * 7 / 10) {
+    //                 let ratioY = map(yy, height * 3 / 5, height * 7 / 10, 0, 1);
+    //                 c = lerpColor(color(189, 250, 245, alpha), color(225, 240, 133, alpha), ratioY);
+    //             } else {
+    //                 let ratioY = map(yy, height * 7 / 10, height, 0, 1);
+    //                 c = lerpColor(color(225, 240, 133, alpha), color(255, 98, 67, alpha), ratioY);
+    //             }
 
-                set(xx, yy, c);
-            }
-        }
+    //             set(xx, yy, c);
+    //         }
+    //     }
 
-        updatePixels();
-    }
+    //     updatePixels();
+    // }
 
     //
 
