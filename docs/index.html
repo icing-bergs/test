@@ -44,7 +44,7 @@ function setup() {
     // 加载并处理背景图片
     backGround = loadImage("assets/images/backGround.png", img => {
         img.resize(windowWidth, windowHeight);
-        offscreen.tint(255, 20);
+        offscreen.tint(255, 60);
         offscreen.image(img, 0, 0);
 
         offscreenNoa.image(img, 0, 0);
@@ -54,7 +54,7 @@ function setup() {
     function draw() {
         //丝带实现
         if (mouseControl) {
-            if (frameCount % 4 == 0) {
+            if (frameCount % 10 == 0) {
                 if(offscreen){
                     image(offscreen,0,0);
                 }
@@ -126,11 +126,11 @@ function setup() {
     class Ribbon {
         constructor(w, y1, movingRight) {
             this.w = w;
-            this.h = random(15, 25); // 丝带的高度
+            this.h = random(12, 20); // 丝带的高度
             this.y1 = y1;
             this.movingRight = movingRight;
             this.x1 = movingRight ? -w : windowWidth;
-            this.speed = random(6.0, 12.0); // 随机速度
+            this.speed = random(12.0, 20.0); // 随机速度
 
             this.color_choose = random(0, 1.7);
             if (this.color_choose < 0.5) {
