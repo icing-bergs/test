@@ -1,6 +1,208 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Embedded Processing Sketch</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.6/processing.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <title>网界瞩目·旗动青行</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            /* 设置渐变背景 */
+            background: linear-gradient(to bottom, #FABDBE 0%, #FA7779 8.3%, #77A8FA 40%, #BDFAF5 60%, #E1F085 70%, #FF6243 100%);
+            /* 渐变从浅粉色到深粉色 */
+            margin: 0; /* 移除默认的边距 */
+            height: 100vh; /* 视口高度 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
+<body>
+<script>
+    let pic;
+    let pixelSize = 6;
+    let boach;
+    let mouseControl = true;
+    let ribbons = [];
+    let pointDraw = 0;
+
+    function setup() {
+        createCanvas(windowWidth, windowHeight); // 创建与窗口大小一致的画布
+        pic = loadImage("/assets/images/original.jpg", () => {
+            pic.resize(windowWidth, windowHeight); // 调整图片大小以适应窗口
+            pic.loadPixels();
+        });
+        ribbons = [];
+    }
+
+    function draw() {
+        //丝带实现
+        if (mouseControl) {
+            if (frameCount % 3 == 0) {
+                // noStroke();
+                // fill(255, 240, 240, 5);
+                // rect(0, 0, windowWidth, windowHeight);
+
+
+                drawGradientBackground(3);
+            }
+            pointDraw = 0;
+            if (frameCount % 60 == 0) { // 每ji秒添加6个丝带
+                let batch = 6;
+                for (let batch_index = 0; batch_index < batch; batch_index++) {
+                    ribbons.push(new Ribbon(random(200, 400), random(height / 3), random(-1, 1) > 0));
+                }
+            }
+
+            // 更新和绘制丝带
+            ribbons.forEach((ribbon) => {
+                ribbon.update();
+                ribbon.display();
+            });
+
+            // 移除丝带
+            ribbons = ribbons.filter(r => !r.isOffScreen() && !r.shouldRemove());
+        } else if (!mouseControl && pointDraw == 0) {
+            pointDraw = 1;
+            colorMode(RGB, 255, 255, 255);
+            drawGradientBackground(255);
+        }
+
+        //
+
+        //像素处理
+        if (pic.width && pic.height) {
+            colorMode(RGB, 255, 255, 255);
+            for (let y = 0; y < pic.height; y += pixelSize) {
+                for (let x = 0; x < pic.width; x += pixelSize) {
+                    let newX = map(x, 0, pic.width, 0, width);
+                    let newY = map(y, 0, pic.height, 0, height);
+                    let index = (x + y * pic.width) * 4;
+                    let r = pic.pixels[index];
+                    let g = pic.pixels[index + 1];
+                    let b = pic.pixels[index + 2];
+                    let a = pic.pixels[index + 3];
+
+                    let currentColor = color(r, g, b, a);
+                    let h = hue(currentColor);
+                    let s = saturation(currentColor);
+                    let bB = brightness(currentColor);
+                    let avgHSB = (h / 3.6 + s + bB) / 3;
+                    let avgRGB = (r + g + b) / 3;
+                    let newSize = map(avgHSB, 0, 100, 2, pixelSize);
+                    let newSizeRY = map(avgRGB, 0, 255, 2, pixelSize);
+                    fill(currentColor);
+                    noStroke();
+                    rect(newX, newY, newSize, newSizeRY);
+                }
+            }
+        }
+        //
+    }
+
+    //这是ribbon类的创建
+    class Ribbon {
+        constructor(w, y1, movingRight) {
+            this.w = w;
+            this.h = random(15, 25); // 丝带的高度
+            this.y1 = y1;
+            this.movingRight = movingRight;
+            this.x1 = movingRight ? -w : windowWidth;
+            this.speed = random(6.0, 12.0); // 随机速度
+
+            this.color_choose = random(0, 1.7);
+            if (this.color_choose < 0.5) {
+                this.H = random(351, 361);
+            } else if (this.color_choose < 1) {
+                this.H = random(55, 65);
+            } else if (this.color_choose < 1.7) {
+                this.H = random(1, 13);
+            }
+            this.S = random(38, 68);
+            this.B = 99;
+            colorMode(HSB, 360, 100, 100, 100);
+            this.c1 = color(this.H, this.S, this.B, 40); // 随机颜色
+            this.noiseOffset = random(1000); // 噪声偏移量
+        }
+
+        update() {
+            if (this.movingRight) {
+                this.x1 += this.speed;
+            } else {
+                this.x1 -= this.speed;
+            }
+            this.y1 += map(noise(this.noiseOffset, frameCount * 0.01), 0, 1, -4, 4); // 使用噪声进行随机上下移动
+            this.noiseOffset += 0.01; // 更新噪声偏移
+        }
+
+        display() {
+            fill(this.c1);
+            noStroke();
+            beginShape();
+            for (let i = 0; i <= this.w; i += 5) {
+                let wave = sin(radians(frameCount * 2 + i)) * this.h / 3; // 模拟波动效果
+                vertex(this.x1 + i, this.y1 + wave);
+            }
+            for (let i = this.w; i >= 0; i -= 5) {
+                let wave = sin(radians(frameCount * 2 + i)) * this.h / 3;
+                vertex(this.x1 + i, this.y1 + this.h - wave);
+            }
+            endShape(CLOSE);
+        }
+
+        isOffScreen() {
+            return this.movingRight ? this.x1 > windowWidth : this.x1 + this.w < 0;
+        }
+
+        shouldRemove() {
+            return this.x1 > windowWidth / 6 && this.x1 < windowWidth * 5 / 6 && random(windowWidth * 2 / (3 * this.speed)) < 1 && this.y1 > windowHeight / 2;
+        }
+    }
+
+    //
+
+    //这是控制背景颜色的函数
+
+    function drawGradientBackground(alpha) {
+        loadPixels();
+
+        for (let xx = 0; xx < width; xx++) {
+            for (let yy = 0; yy < height; yy++) {
+                let c;
+                //let alpha = 3; // 透明度设置，范围从0到255
+                if (yy < height / 12) {
+                    let ratioY = map(yy, 0, height / 12, 0, 1);
+                    c = lerpColor(color(250, 189, 190, alpha), color(250, 119, 121, alpha), ratioY);
+                } else if (yy < height * 2 / 5) {
+                    let ratioY = map(yy, height / 12, height * 2 / 5, 0, 1);
+                    c = lerpColor(color(250, 119, 121, alpha), color(119, 168, 250, alpha), ratioY);
+                } else if (yy < height * 3 / 5) {
+                    let ratioY = map(yy, height * 2 / 5, height * 3 / 5, 0, 1);
+                    c = lerpColor(color(119, 168, 250, alpha), color(189, 250, 245, alpha), ratioY);
+                } else if (yy < height * 7 / 10) {
+                    let ratioY = map(yy, height * 3 / 5, height * 7 / 10, 0, 1);
+                    c = lerpColor(color(189, 250, 245, alpha), color(225, 240, 133, alpha), ratioY);
+                } else {
+                    let ratioY = map(yy, height * 7 / 10, height, 0, 1);
+                    c = lerpColor(color(225, 240, 133, alpha), color(255, 98, 67, alpha), ratioY);
+                }
+
+                set(xx, yy, c);
+            }
+        }
+
+        updatePixels();
+    }
+
+    //
+
+    //这是一个实现鼠标交互的函数
+    function mousePressed() {
+        boach = !mouseControl;
+        mouseControl = boach;
+    }
+
+    //
+</script>
+</body>
+</html>
