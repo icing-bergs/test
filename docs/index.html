@@ -44,7 +44,7 @@ function setup() {
     // 加载并处理背景图片
     backGround = loadImage("assets/images/backGround.png", img => {
         img.resize(windowWidth, windowHeight);
-        offscreen.tint(255, 3);
+        offscreen.tint(255, 20);
         offscreen.image(img, 0, 0);
 
         offscreenNoa.image(img, 0, 0);
@@ -54,7 +54,7 @@ function setup() {
     function draw() {
         //丝带实现
         if (mouseControl) {
-            if (frameCount % 3 == 0) {
+            if (frameCount % 4 == 0) {
                 if(offscreen){
                     image(offscreen,0,0);
                 }
