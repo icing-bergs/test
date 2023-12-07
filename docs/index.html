@@ -66,7 +66,7 @@ function setup() {
                // drawGradientBackground(3);
             }
             pointDraw = 0;
-            if (frameCount % 60 == 0) { // 每ji秒添加6个丝带
+            if (frameCount % 30 == 0) { // 每ji秒添加6个丝带
                 let batch = 6;
                 for (let batch_index = 0; batch_index < batch; batch_index++) {
                     ribbons.push(new Ribbon(random(200, 400), random(height / 3), random(-1, 1) > 0));
@@ -130,7 +130,7 @@ function setup() {
             this.y1 = y1;
             this.movingRight = movingRight;
             this.x1 = movingRight ? -w : windowWidth;
-            this.speed = random(30.0, 40.0); // 随机速度
+            this.speed = random(15.0, 25.0); // 随机速度
 
             this.color_choose = random(0, 1.7);
             if (this.color_choose < 0.5) {
