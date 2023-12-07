@@ -31,7 +31,7 @@
 
     function setup() {
         createCanvas(windowWidth, windowHeight); // 创建与窗口大小一致的画布
-         pic = loadImage("assets/images/original.png");
+         pic = loadImage("assets/images/original.jpg");
         
             pic.resize(windowWidth, windowHeight); // 调整图片大小以适应窗口
             pic.loadPixels();
@@ -42,7 +42,7 @@
         offscreen=creatGraphics(windowWidth, windowHeight);
         offscreenNoa=creatGraphics(windowWidth, windowHeight);
        
-        backGround=loadImage("assets/images/backGround.jpg");
+        backGround=loadImage("assets/images/backGround.png");
         backGround.resize(windowWidth, windowHeight);
         offscreen.tint(255,3);
         offScreen.image(backGround,0,0);
